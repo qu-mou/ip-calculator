@@ -1,20 +1,15 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 在推送到 main 分支时触发部署
   push:
     branches: ["main"]
-  
-  # 允许手动触发部署
   workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 的权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并发部署
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -34,8 +29,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      # 配置 Next.js 为静态导出模式
-      # 需要在 next.config.js 中添加 output: 'export'
       - name: Build static site
         run: bun run build
 
@@ -45,8 +38,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Next.js 静态导出的默认输出目录是 out
-          path: './out'
+          # 对应 next.config.ts 中的 distDir（如果用了 distDir: "dist"）
+          # 如果没用 distDir，默认是 out
+          path: './dist'
 
   deploy:
     environment:
